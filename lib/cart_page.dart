@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'api_service.dart';
+import 'edit_order_page.dart';
 import 'order.dart';
 
 class CartPage extends StatefulWidget {
@@ -17,6 +18,13 @@ class _CartPageState extends State<CartPage> {
     super.initState();
     _orders = ApiService().getOrders();
   }
+
+  Future<void> _refreshOrders() async {
+    setState(() {
+      _orders = ApiService().getOrders();
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +54,15 @@ class _CartPageState extends State<CartPage> {
                     itemBuilder: (context, index) {
                       final order = orders[index];
                       return ListTile(
+                        onTap: () async {
+                          bool? result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => EditOrderPage(order: order)),
+                          );
+                          if (result == true) {
+                            _refreshOrders();
+                          }
+                        },
                         leading: Image.network(order.gambar,
                             height: 50, width: 50, fit: BoxFit.cover),
                         title: Text(order.nama_barang),
